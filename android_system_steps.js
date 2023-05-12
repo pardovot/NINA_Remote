@@ -1,3 +1,38 @@
+// AndroidManifest.xml
+
+/*
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application
+      android:name=".MainApplication"
+      android:label="@string/app_name"
+      android:icon="@mipmap/ic_launcher"
+      android:roundIcon="@mipmap/ic_launcher_round"
+      android:allowBackup="false"
+      android:theme="@style/AppTheme">
+      <activity
+        android:name=".MainActivity"
+        android:label="@string/app_name"
+        android:screenOrientation="sensorLandscape"
+        android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize|smallestScreenSize|uiMode"
+        android:launchMode="singleTask"
+        android:windowSoftInputMode="adjustResize"
+        android:exported="true">
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+      </activity>
+    </application>
+</manifest>
+
+*/
+
+//MainActivity.java
+
+/*
 package com.nina_remote;
 
 import com.facebook.react.ReactActivity;
@@ -16,7 +51,7 @@ public class MainActivity extends ReactActivity {
   /**
    * Returns the name of the main component registered from JavaScript. This is used to schedule
    * rendering of the component.
-   */
+   * /
   @Override
   protected String getMainComponentName() {
     return "NINA_Remote";
@@ -26,7 +61,7 @@ public class MainActivity extends ReactActivity {
    * Returns the instance of the {@link ReactActivityDelegate}. Here we use a util class {@link
    * DefaultReactActivityDelegate} which allows you to easily enable Fabric and Concurrent React
    * (aka React 18) with two boolean flags.
-   */
+   * /
   @Override
   protected ReactActivityDelegate createReactActivityDelegate() {
     return new DefaultReactActivityDelegate(
@@ -53,3 +88,15 @@ public class MainActivity extends ReactActivity {
        super.onCreate(savedInstanceState);
   }
 }
+
+*/
+
+// app.json
+
+/*
+{
+  "name": "NINA_Remote",
+  "displayName": "NINA Remote"
+}
+
+*/
