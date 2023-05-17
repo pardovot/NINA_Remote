@@ -1,118 +1,53 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
+import React, { useState } from 'react';
+import { StatusBar } from 'react-native';
+import { NavigationContainer, NavigationProp } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import type { StackScreenProps } from '@react-navigation/stack';
+import SystemNavigationBar from 'react-native-system-navigation-bar';
+import FirstConnect from './components/FirstConnect';
+import LiveView from './components/LiveView';
+import MainApp from './components/MainApp';
+import { observer } from 'mobx-react-lite';
 
-import React from 'react';
-import type {PropsWithChildren} from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+SystemNavigationBar.immersive();
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+export type RootStackParamList = {
+  FirstConnect: undefined;
+  LiveView: undefined;
+  MainApp: undefined;
+};
 
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
-function Section({children, title}: SectionProps): JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
+export type ScreenNavigationProp = StackScreenProps<RootStackParamList>;
+
+const MyTheme = {
+  colors: {
+    background: 'rgb(30, 30, 30)',
+    border: 'rgb(39, 39, 41)',
+    card: 'rgb(18, 18, 18)',
+    notification: 'rgb(255, 69, 58)',
+    primary: 'rgb(10, 132, 255)',
+    text: 'rgb(229, 229, 231)',
+  },
+  dark: true,
+};
+
+const App = observer(() => {
   return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
+    <NavigationContainer theme={MyTheme}>
+      <StatusBar hidden translucent />
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="FirstConnect">{(props) => <FirstConnect {...props} />}</Stack.Screen>
+        <Stack.Screen name="MainApp">{(props) => <MainApp {...props} />}</Stack.Screen>
+        {/* <Stack.Screen name="Equipments">{(props) => <Equipments {...props} />}</Stack.Screen> */}
+        {/* <Stack.Screen name="Sequencer">{(props) => <Sequencer {...props} />}</Stack.Screen> */}
+        {/* <Stack.Screen name="Imaging">{(props) => <Imaging {...props} />}</Stack.Screen> */}
+        {/* <Stack.Screen name="Options">{(props) => <OptionsView {...props} />}</Stack.Screen> */}
+        <Stack.Screen name="LiveView">{(props) => <LiveView {...props} />}</Stack.Screen>
+      </Stack.Navigator>
+    </NavigationContainer>
   );
-}
-
-function App(): JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
-
-  return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
-  );
-}
-
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
 });
 
 export default App;

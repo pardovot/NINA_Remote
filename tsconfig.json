@@ -1,3 +1,20 @@
 {
-  "extends": "@tsconfig/react-native/tsconfig.json"
+  "extends": "@tsconfig/react-native/tsconfig.json",
+  "compilerOptions": {
+    "allowJs": true,
+    "jsx": "react-native",
+    "noEmit": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "strict": true,
+    "noImplicitAny": false,
+    "moduleResolution": "node",
+    "baseUrl": "./",
+    "strictNullChecks": false,
+    "paths": {
+      "@/*": ["src/*"]
+    },
+    "lib": ["es6", "dom", "esnext.asynciterable"]
+  }
 }
