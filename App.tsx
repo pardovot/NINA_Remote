@@ -1,20 +1,24 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { StatusBar } from 'react-native';
-import { NavigationContainer, NavigationProp } from '@react-navigation/native';
+import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import type { StackScreenProps } from '@react-navigation/stack';
 import SystemNavigationBar from 'react-native-system-navigation-bar';
-import FirstConnect from './components/FirstConnect';
+import MainView from './components/MainView';
+import Equipments from './components/Equipment/Equipments';
+// import Sequencer from './components/Sequencer';
+import Imaging from './components/Imaging';
+// import OptionsView from './components/Options/OptionsView';
 import LiveView from './components/LiveView';
-import MainApp from './components/MainApp';
 import { observer } from 'mobx-react-lite';
+import { StackScreenProps } from '@react-navigation/stack';
 
 SystemNavigationBar.immersive();
 
 export type RootStackParamList = {
-  FirstConnect: undefined;
+  MainView: undefined;
   LiveView: undefined;
-  MainApp: undefined;
+  Imaging: undefined;
+  Equipments: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -38,12 +42,15 @@ const App = observer(() => {
     <NavigationContainer theme={MyTheme}>
       <StatusBar hidden translucent />
       <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="FirstConnect">{(props) => <FirstConnect {...props} />}</Stack.Screen>
-        <Stack.Screen name="MainApp">{(props) => <MainApp {...props} />}</Stack.Screen>
-        {/* <Stack.Screen name="Equipments">{(props) => <Equipments {...props} />}</Stack.Screen> */}
-        {/* <Stack.Screen name="Sequencer">{(props) => <Sequencer {...props} />}</Stack.Screen> */}
-        {/* <Stack.Screen name="Imaging">{(props) => <Imaging {...props} />}</Stack.Screen> */}
-        {/* <Stack.Screen name="Options">{(props) => <OptionsView {...props} />}</Stack.Screen> */}
+        <Stack.Screen name="MainView">{(props) => <MainView {...props} />}</Stack.Screen>
+        <Stack.Screen name="Equipments">{(props) => <Equipments {...props} />}</Stack.Screen>
+        {/* <Stack.Screen name="Sequencer">
+          {props => <Sequencer {...props} />}
+        </Stack.Screen> */}
+        <Stack.Screen name="Imaging">{(props) => <Imaging {...props} />}</Stack.Screen>
+        {/* <Stack.Screen name="Options">
+          {props => <OptionsView {...props} />}
+        </Stack.Screen> */}
         <Stack.Screen name="LiveView">{(props) => <LiveView {...props} />}</Stack.Screen>
       </Stack.Navigator>
     </NavigationContainer>

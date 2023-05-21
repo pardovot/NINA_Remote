@@ -14,12 +14,13 @@ class GlobalStore {
   ip = '192.168.1.5';
   isSocketConnected = false;
   event = 'init';
-  base64Image = '';
+  base64Image = undefined;
   activeProfile: { [key: string]: any } = {};
   isTabHidden = false;
   cameraSettings = {};
   telescopeSettings = {};
   autoRefreshImage = true;
+  connectedDevices = {};
 
   constructor() {
     makeObservable(this, {
@@ -46,6 +47,8 @@ class GlobalStore {
       fetchLastImage: action.bound,
       fetchPost: action.bound,
       fetchData: action.bound,
+      addConnectedDevice: action.bound,
+      removeConnectedDevice: action.bound,
     });
   }
 
@@ -102,29 +105,40 @@ class GlobalStore {
     this.autoRefreshImage = newValue;
   }
 
+  addConnectedDevice(equipmentName: string) {
+    this.connectedDevices[equipmentName] = true;
+  }
+
+  removeConnectedDevice(equipmentName: string) {
+    delete this.connectedDevices[equipmentName];
+  }
+
   handleScreenTabClick() {
     console.log('handleScreenTabClick');
     this.setIsTabHidden();
   }
 
-  initializeWebsocket() {
+  async initializeWebsocket() {
     const reg = /^(([1-9]?\d|1\d\d|2[0-4]\d|25[0-5])(\.(?!$)|(?=$))){4}$/;
     if (reg.test(this.ip) && !this.isSocketConnected && this.client == null) {
       console.log('init');
       this.client = new ReconnectingWebSocket(`ws://${this.ip}:1888/socket`, null, { reconnectInterval: 3000 });
 
-      this.client.onopen = (e) => {
+      this.client.onopen = async (e) => {
         console.log('onopen', e);
         this.setIsSocketConnected(true);
       };
 
-      this.client.onmessage = (evt) => {
+      this.client.onmessage = async (evt) => {
         console.log('onmessage', JSON.parse(evt.data));
         this.setEvent(JSON.parse(evt.data));
         const message = JSON.parse(evt.data).Response;
         switch (message) {
-          case 'NINA-NEW-IMAGE':
-            if (this.autoRefreshImage) this.fetchLastImage();
+          case 'IMAGE-NEW':
+            if (this.autoRefreshImage) await this.fetchLastImage();
+            break;
+          case 'NINA-CAMERA-CONNECTION-CHANGED':
+            await this.fetchData('equipment?property=connected&parameter=Camera');
             break;
           default:
             break;
@@ -158,45 +172,51 @@ class GlobalStore {
     this.client = null;
   }
 
-  fetchLastImage = async (scale = 5) => {
-    const { json } = await this.fetchData(`equipment?property=image&parameter=${scale}`);
-
-    if (json?.Result?.Response != 'No Images Available') {
-      const image = json.Result.Response;
+  fetchLastImage = async (scale: number = 100) => {
+    const response = await this.fetchData(`equipment?property=image&parameter=${scale}`);
+    if (!response) {
+      console.log('response is null');
+      return;
+    }
+    const { json } = response;
+    if (json?.Response != 'No Images Available') {
+      const image = json.Response;
       this.setBase64Image(image);
     }
   };
 
   fetchData = async (endpoint) => {
     try {
-      const response = await fetch(`http://${this.ip}:1888/api/${endpoint}`);
+      const fetchURL = `http://${this.ip}:1888/api/${endpoint}`;
+      console.log(fetchURL);
+      const response = await fetch(fetchURL);
       const json = await response.json();
       // if (response.status != 200) throw new Error("Invalid status code");
       return { response, json };
     } catch (error) {
-      console.log(error);
+      // console.log('here');
+      // console.log(error);
     }
   };
 
   fetchPost = async (endpoint: string, body: Body) => {
     try {
-      const response = await fetch(
-        `http://${this.ip}:1888/api/${endpoint}`,
-
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(body),
+      const fetchURL = `http://${this.ip}:1888/api/${endpoint}`;
+      console.log(fetchURL);
+      const response = await fetch(fetchURL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
-      );
+        body: JSON.stringify(body),
+      });
       if (!response) return;
       const json = await response.json();
 
       // if (response.status != 200) throw new Error("Invalid status code");
       return { response, json };
     } catch (error) {
+      console.log('still here?');
       console.log(error);
     }
   };

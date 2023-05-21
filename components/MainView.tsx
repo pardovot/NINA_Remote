@@ -4,7 +4,7 @@ import { observer } from 'mobx-react-lite';
 import { useGlobalStore } from '../mobx/GlobalStore';
 import { ScreenNavigationProp } from '../App';
 
-const FirstConnect = observer(({ navigation }: ScreenNavigationProp) => {
+const MainView = observer(({ navigation }: ScreenNavigationProp) => {
   const { setIP, initializeWebsocket, isSocketConnected, client, killWebsocket } = useGlobalStore();
 
   const connectedText = isSocketConnected ? 'Connected' : client ? 'Attempting to connect....' : 'Disconnected';
@@ -19,22 +19,26 @@ const FirstConnect = observer(({ navigation }: ScreenNavigationProp) => {
     navigation.navigate(screen);
   };
 
-  const handleConnectButton = () => {
+  const handleConnectButton = async () => {
     if (isSocketConnected) {
       client.close(1000, 'terminate');
     } else {
-      initializeWebsocket();
+      await initializeWebsocket();
     }
   };
 
   useEffect(() => {
     if (!isSocketConnected) {
-      navigateTo('FirstConnect');
+      navigateTo('MainView');
     }
   }, [isSocketConnected]);
 
   return (
-    <ImageBackground source={require('../public/background.jpg')} resizeMode="cover" imageStyle={{ opacity: 1 }} style={{ flex: 1, justifyContent: 'center' }}>
+    <ImageBackground
+      source={require('../public/background.jpg')}
+      resizeMode="cover"
+      imageStyle={{ opacity: 1 }}
+      style={{ flex: 1, justifyContent: 'center' }}>
       <View style={styles.mainContainer}>
         <Text style={[styles.connectText, isSocketConnected ? styles.connected : styles.notConnected]}>{connectedText}</Text>
         <View style={styles.innerContainer}>
@@ -152,4 +156,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default FirstConnect;
+export default MainView;

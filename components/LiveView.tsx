@@ -2,10 +2,11 @@ import { StyleSheet } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import FastImage from 'react-native-fast-image';
 import { useGlobalStore } from '../mobx/GlobalStore';
+import { ScreenNavigationProp } from 'App';
 
 let interval: number;
 
-export default function LiveView() {
+export default function LiveView({ navigation }: ScreenNavigationProp) {
   const [image, setImage] = useState('data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==');
   const { fetchPost } = useGlobalStore();
 
