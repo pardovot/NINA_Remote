@@ -15,13 +15,22 @@ type EquipmentItemProps = {
 
 const EquipmentItem = observer(
   ({ navigation, equipmentName, savedProperties, innerProperties, shortenedName: shortenedName }: EquipmentItemProps) => {
-    const { ip, handleScreenTabClick, fetchData, fetchPost, addConnectedDevice, removeConnectedDevice } = useGlobalStore();
+    const { ip, client, handleScreenTabClick, fetchData, fetchPost } = useGlobalStore();
     const [isItemConnected, setIsItemConnected] = useState(false);
     const [equipmentData, setEquipmentData] = useState({});
 
     const lowerCaseEquipmentName = equipmentName.toLowerCase();
 
     let fetchInterval;
+
+    client.onmessage = async (evt: { data: string }) => {
+      console.log('onmessage', JSON.parse(evt.data));
+      const message = JSON.parse(evt.data).Response;
+      console.log(`message: ${message}`);
+      if (message == `NINA-${equipmentName.toUpperCase()}-CONNECTION-CHANGED` || message == 'NINA-FILTER-CONNECTION-CHANGED') {
+        await fetchEquipmentAPI();
+      }
+    };
 
     useEffect(() => {
       (async () => {
@@ -43,10 +52,8 @@ const EquipmentItem = observer(
         setEquipmentData(json.Response);
         if (json.Response.Connected) {
           setIsItemConnected(true);
-          addConnectedDevice(equipmentName);
         } else {
           setIsItemConnected(false);
-          removeConnectedDevice(equipmentName);
         }
       }
     };

@@ -20,7 +20,6 @@ class GlobalStore {
   cameraSettings = {};
   telescopeSettings = {};
   autoRefreshImage = true;
-  connectedDevices = {};
 
   constructor() {
     makeObservable(this, {
@@ -47,8 +46,6 @@ class GlobalStore {
       fetchLastImage: action.bound,
       fetchPost: action.bound,
       fetchData: action.bound,
-      addConnectedDevice: action.bound,
-      removeConnectedDevice: action.bound,
     });
   }
 
@@ -105,14 +102,6 @@ class GlobalStore {
     this.autoRefreshImage = newValue;
   }
 
-  addConnectedDevice(equipmentName: string) {
-    this.connectedDevices[equipmentName] = true;
-  }
-
-  removeConnectedDevice(equipmentName: string) {
-    delete this.connectedDevices[equipmentName];
-  }
-
   handleScreenTabClick() {
     console.log('handleScreenTabClick');
     this.setIsTabHidden();
@@ -133,12 +122,10 @@ class GlobalStore {
         console.log('onmessage', JSON.parse(evt.data));
         this.setEvent(JSON.parse(evt.data));
         const message = JSON.parse(evt.data).Response;
+        console.log(message);
         switch (message) {
           case 'IMAGE-NEW':
             if (this.autoRefreshImage) await this.fetchLastImage();
-            break;
-          case 'NINA-CAMERA-CONNECTION-CHANGED':
-            await this.fetchData('equipment?property=connected&parameter=Camera');
             break;
           default:
             break;
