@@ -1,6 +1,6 @@
 // counter.store.js
 import React from 'react';
-import { makeObservable, action, observable } from 'mobx';
+import { makeObservable, action, observable, runInAction } from 'mobx';
 import ReconnectingWebSocket from 'react-native-reconnecting-websocket';
 import { Alert } from 'react-native';
 
@@ -8,6 +8,19 @@ type Body = {
   Device: string;
   Action: string;
 };
+
+type TelescopeSettings = Partial<{
+  Id: string;
+  Name: string;
+  FocalLength: string;
+  FocalRatio: string;
+  SnapPortStart: string;
+  SnapPortStop: string;
+  SettleTime: number;
+  NoSync: boolean;
+  PrimaryReversed: boolean;
+  SecondaryReversed: boolean;
+}>;
 
 class GlobalStore {
   client = null;
@@ -17,8 +30,8 @@ class GlobalStore {
   base64Image = undefined;
   activeProfile: { [key: string]: any } = {};
   isTabHidden = false;
-  cameraSettings = {};
-  telescopeSettings = {};
+  cameraSettings: CameraSettings = {};
+  telescopeSettings: TelescopeSettings = {};
   autoRefreshImage = true;
 
   constructor() {
@@ -40,7 +53,7 @@ class GlobalStore {
       setBase64Image: action.bound,
       setActiveProfile: action.bound,
       killWebsocket: action.bound,
-      setTelescopeProperty: action.bound,
+      // setTelescopeProperty: action.bound,
       handleScreenTabClick: action.bound,
       setAutoRefreshImage: action.bound,
       fetchLastImage: action.bound,
@@ -63,13 +76,53 @@ class GlobalStore {
     this.setCameraSettings(this.activeProfile.CameraSettings);
   }
 
-  setTelescopeProperty(property: string, newValue: string) {
+  setProfileEquipmentProperty = async (identifier: string, newValue: string | boolean) => {
     try {
-      this.telescopeSettings[property] = newValue;
+      const body = {
+        Device: 'change-value',
+        Action: identifier,
+        Parameter: [newValue],
+      };
+      console.log(body);
+      const { response } = await this.fetchPost('profile', body);
+      const { json } = await this.fetchData('profile?property=active');
+      this.setActiveProfile(json.Response);
+      return { response, json };
     } catch (error) {
       console.log(error);
     }
-  }
+  };
+
+  // setTelescopeProperty(property: string, newValue: string) {
+  //   try {
+  //     const body = {
+  //       Device: 'change-value',
+  //       Action: `TelescopeSettings-NoSync`,
+  //       Parameter: [newValue],
+  //     };
+  //     this.fetchPost('equipment', body);
+  //     this.telescopeSettings[property] = newValue;
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // }
+
+  // setCameraProperty = async (property: string, newValue: string) => {
+  //   try {
+  //     console.log('first');
+  //     const body = {
+  //       Device: 'change-value',
+  //       Action: `CameraSettings-${property}`,
+  //       Parameter: newValue,
+  //     };
+  //     const { response } = await this.fetchPost('profile', body);
+  //     if (response.status == 200) {
+  //       this.cameraSettings[property] = newValue;
+  //     }
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
   setBase64Image(base64URL: string) {
     this.createBase64URL(base64URL);
@@ -107,7 +160,7 @@ class GlobalStore {
     this.setIsTabHidden();
   }
 
-  async initializeWebsocket() {
+  initializeWebsocket = async () => {
     const reg = /^(([1-9]?\d|1\d\d|2[0-4]\d|25[0-5])(\.(?!$)|(?=$))){4}$/;
     if (reg.test(this.ip) && !this.isSocketConnected && this.client == null) {
       console.log('init');
@@ -149,7 +202,7 @@ class GlobalStore {
         }
       };
     }
-  }
+  };
 
   killWebsocket() {
     this.client.onopen = null;
@@ -199,11 +252,9 @@ class GlobalStore {
       });
       if (!response) return;
       const json = await response.json();
-
-      // if (response.status != 200) throw new Error("Invalid status code");
+      console.log(json);
       return { response, json };
     } catch (error) {
-      console.log('still here?');
       console.log(error);
     }
   };

@@ -12,7 +12,7 @@ import { ScreenNavigationProp } from 'App';
 
 const Tab = createMaterialTopTabNavigator();
 
-export default function OptionsView({navigation}: ScreenNavigationProp) {
+export default function OptionsView({} : ScreenNavigationProp) {
 
   const { ip, activeProfile, setActiveProfile, fetchData } = useGlobalStore();
   const [tabDisplay, setTabDisplay] = useState({ tabBarStyle: { position: 'absolute' }});
