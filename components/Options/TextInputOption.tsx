@@ -12,15 +12,35 @@ export default function TextInputOption({ defaultValue, property, suffix = '' })
   };
 
   return (
-      <TextInput style={styles.text} defaultValue={defaultValue} onSubmitEditing={(event) => handleTextChange(event, property)}>{suffix}</TextInput>
+    <View style={styles.container}>
+      <TextInput style={styles.text} defaultValue={defaultValue} onSubmitEditing={(event) => handleTextChange(event, property)}></TextInput>
+      <Text style={styles.suffix}>{suffix}</Text>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   text: {
     color: '#ff726f',
-  },
-  textInput: {
-    marginRight: 10,
+    marginLeft: 5,
+},
+textInput: {
+},
+container: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    // height: '20%',
+},
+// textInput: {
+//     marginRight: 8,
+//     height: 40,
+//     borderColor: 'gray',
+//     borderWidth: 1,
+//     paddingHorizontal: 8,
+//   },
+  suffix: {
+    // fontSize: 16,
+    fontWeight: '300',
+    
   },
 });

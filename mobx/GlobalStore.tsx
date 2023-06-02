@@ -32,6 +32,7 @@ class GlobalStore {
   isTabHidden = false;
   cameraSettings: CameraSettings = {};
   telescopeSettings: TelescopeSettings = {};
+  focuserSettings: FocuserSettings = {};
   autoRefreshImage = true;
 
   constructor() {
@@ -45,6 +46,7 @@ class GlobalStore {
       isTabHidden: observable,
       cameraSettings: observable,
       telescopeSettings: observable,
+      focuserSettings: observable,
       autoRefreshImage: observable,
       setIP: action.bound,
       setEvent: action.bound,
@@ -70,10 +72,15 @@ class GlobalStore {
     this.cameraSettings = cameraSettings;
   }
 
+  setFocuserSettings(focuserSettings) {
+    this.focuserSettings = focuserSettings;
+  }
+
   setActiveProfile(activeProfile: { [key: string]: string }) {
     this.activeProfile = activeProfile;
     this.setTelescopeSettings(this.activeProfile.TelescopeSettings);
     this.setCameraSettings(this.activeProfile.CameraSettings);
+    this.setFocuserSettings(this.activeProfile.FocuserSettings);
   }
 
   setProfileEquipmentProperty = async (identifier: string, newValue: string | boolean) => {
@@ -83,7 +90,6 @@ class GlobalStore {
         Action: identifier,
         Parameter: [newValue],
       };
-      console.log(body);
       const { response } = await this.fetchPost('profile', body);
       const { json } = await this.fetchData('profile?property=active');
       this.setActiveProfile(json.Response);
@@ -92,37 +98,6 @@ class GlobalStore {
       console.log(error);
     }
   };
-
-  // setTelescopeProperty(property: string, newValue: string) {
-  //   try {
-  //     const body = {
-  //       Device: 'change-value',
-  //       Action: `TelescopeSettings-NoSync`,
-  //       Parameter: [newValue],
-  //     };
-  //     this.fetchPost('equipment', body);
-  //     this.telescopeSettings[property] = newValue;
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // }
-
-  // setCameraProperty = async (property: string, newValue: string) => {
-  //   try {
-  //     console.log('first');
-  //     const body = {
-  //       Device: 'change-value',
-  //       Action: `CameraSettings-${property}`,
-  //       Parameter: newValue,
-  //     };
-  //     const { response } = await this.fetchPost('profile', body);
-  //     if (response.status == 200) {
-  //       this.cameraSettings[property] = newValue;
-  //     }
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
 
   setBase64Image(base64URL: string) {
     this.createBase64URL(base64URL);
@@ -156,7 +131,6 @@ class GlobalStore {
   }
 
   handleScreenTabClick() {
-    console.log('handleScreenTabClick');
     this.setIsTabHidden();
   }
 
@@ -228,21 +202,17 @@ class GlobalStore {
   fetchData = async (endpoint) => {
     try {
       const fetchURL = `http://${this.ip}:1888/api/${endpoint}`;
-      console.log(fetchURL);
       const response = await fetch(fetchURL);
       const json = await response.json();
       // if (response.status != 200) throw new Error("Invalid status code");
       return { response, json };
     } catch (error) {
-      // console.log('here');
-      // console.log(error);
     }
   };
 
   fetchPost = async (endpoint: string, body: Body) => {
     try {
       const fetchURL = `http://${this.ip}:1888/api/${endpoint}`;
-      console.log(fetchURL);
       const response = await fetch(fetchURL, {
         method: 'POST',
         headers: {
@@ -252,7 +222,6 @@ class GlobalStore {
       });
       if (!response) return;
       const json = await response.json();
-      console.log(json);
       return { response, json };
     } catch (error) {
       console.log(error);
