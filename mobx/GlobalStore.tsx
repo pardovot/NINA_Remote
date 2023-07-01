@@ -55,7 +55,7 @@ class GlobalStore {
       setBase64Image: action.bound,
       setActiveProfile: action.bound,
       killWebsocket: action.bound,
-      // setTelescopeProperty: action.bound,
+      fetchActiveProfile: action.bound,
       handleScreenTabClick: action.bound,
       setAutoRefreshImage: action.bound,
       fetchLastImage: action.bound,
@@ -227,6 +227,11 @@ class GlobalStore {
       console.log(error);
     }
   };
+
+  fetchActiveProfile = async() => {
+    const { json } = await this.fetchData("profile?property=active");
+    this.setActiveProfile(json.Response);
+  }
 }
 
 // Instantiate the counter store.

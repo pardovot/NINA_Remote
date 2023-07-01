@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View } from 'react-native';
-import React, { useState } from 'react';
+import React from 'react';
 import TextInputOption from './TextInputOption';
 import { useGlobalStore } from '../../mobx/GlobalStore';
 import { observer } from 'mobx-react-lite';
@@ -25,10 +25,6 @@ const styles = StyleSheet.create({
   },
   container: {
     alignItems: 'center',
-    // marginLeft: '1%',
-    // borderColor: 'gray',
-    // borderWidth: 1,
-    // maxHeight: '60%',
   },
   cameraRow: {},
   textInput: {},

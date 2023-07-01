@@ -7,15 +7,15 @@ import Autofocus from './Autofocus';
 import ImagingOptions from './ImagingOptions';
 import { useGlobalStore } from '../../mobx/GlobalStore';
 import { ScreenNavigationProp } from 'App';
-// import { BottomTabNavigationOptions } from '@react-navigation/bottom-tabs';
-// import Icon from 'react-native-vector-icons'; // Replace 'FontAwesome' with the appropriate icon pack
 
 const Tab = createMaterialTopTabNavigator();
 
 export default function OptionsView({} : ScreenNavigationProp) {
 
-  const { ip, activeProfile, setActiveProfile, fetchData } = useGlobalStore();
+  const { ip, activeProfile, fetchActiveProfile } = useGlobalStore();
   const [tabDisplay, setTabDisplay] = useState({ tabBarStyle: { position: 'absolute' }});
+
+  let fetchInterval;
 
   // const handleScreenTabClick = () => {
   //   console.log("Click");
@@ -28,12 +28,15 @@ export default function OptionsView({} : ScreenNavigationProp) {
   // }
 
   useEffect(() => {
-    const fetchActiveProfile = async() => {
-      const { json } = await fetchData("profile?property=active");
-      setActiveProfile(json.Response);
-    }
-
-    fetchActiveProfile();
+    (async () => {
+      await fetchActiveProfile();
+      fetchInterval = setInterval(async () => {
+          await fetchActiveProfile();
+      }, 3000);
+    })();
+    return () => {
+      clearInterval(fetchInterval);
+    };
   }, []);
 
   return (
@@ -53,16 +56,3 @@ const styles = StyleSheet.create({
     left: "5%",
   },
 });
-
-{/* <Tab.Screen name="General">
-{props => <General {...props} navigation={navigation} />}
-</Tab.Screen>
-<Tab.Screen name="Equipment">
-{props => <EquipmentOptions {...props} navigation={navigation} />}
-</Tab.Screen>
-<Tab.Screen name="Autofocus">
-{props => <Autofocus {...props} navigation={navigation} />}
-</Tab.Screen>
-<Tab.Screen name="Imaging">
-{props => <ImagingOptions {...props} navigation={navigation}  />}
-</Tab.Screen> */}

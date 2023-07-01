@@ -2,18 +2,19 @@ import { NativeSyntheticEvent, StyleSheet, Text, TextInput, TextInputSubmitEditi
 import React from 'react';
 import { useGlobalStore } from '../../mobx/GlobalStore';
 
-export default function TextInputOption({ defaultValue, property, suffix = '' }) {
+export default function TextInputOption({ defaultValue, property, suffix = '', marginRight = 0 }) {
   const { setProfileEquipmentProperty } = useGlobalStore();
 
   const handleTextChange = async (event: NativeSyntheticEvent<TextInputSubmitEditingEventData>  , identifier: string) => {
     const { text } = event.nativeEvent;
+    if (defaultValue == text) return;
     console.log('Changed input:', identifier, 'New value:', text);
     await setProfileEquipmentProperty(identifier, text);
   };
 
   return (
     <View style={styles.container}>
-      <TextInput style={styles.text} defaultValue={defaultValue} onSubmitEditing={(event) => handleTextChange(event, property)}></TextInput>
+      <TextInput style={[styles.text, {marginRight}]} defaultValue={defaultValue} onSubmitEditing={(event) => handleTextChange(event, property)} onEndEditing={(event) => handleTextChange(event, property)} ></TextInput>
       <Text style={styles.suffix}>{suffix}</Text>
     </View>
   );
@@ -22,25 +23,14 @@ export default function TextInputOption({ defaultValue, property, suffix = '' })
 const styles = StyleSheet.create({
   text: {
     color: '#ff726f',
-    marginLeft: 5,
 },
 textInput: {
 },
 container: {
     flexDirection: 'row',
     alignItems: 'center',
-    // height: '20%',
 },
-// textInput: {
-//     marginRight: 8,
-//     height: 40,
-//     borderColor: 'gray',
-//     borderWidth: 1,
-//     paddingHorizontal: 8,
-//   },
   suffix: {
-    // fontSize: 16,
     fontWeight: '300',
-    
   },
 });

@@ -1,5 +1,5 @@
 import { StyleSheet, Switch, Text, View } from 'react-native';
-import React, { useState } from 'react';
+import React from 'react';
 import TextInputOption from './TextInputOption';
 import { useGlobalStore } from '../../mobx/GlobalStore';
 import { observer } from 'mobx-react-lite';
@@ -19,11 +19,11 @@ export default observer(function TelescopeEquipmentOptions() {
       <Text>Telescope name:</Text>
       <TextInputOption defaultValue={Name?.toString()} property={'TelescopeSettings-Name'} />
       <Text style={styles.textInput}>Focal length:</Text>
-      <TextInputOption defaultValue={FocalLength?.toString() == 'NaN' ? '--' : FocalLength?.toString()} property={'TelescopeSettings-FocalLength'} suffix="mm" />
+      <TextInputOption defaultValue={FocalLength?.toString() == 'NaN' ? '--' : FocalLength?.toString()} property={'TelescopeSettings-FocalLength'} suffix=" mm" />
       <Text style={styles.textInput}>Focal ratio:</Text>
       <TextInputOption defaultValue={FocalRatio?.toString() == 'NaN' ? '--' : FocalRatio?.toString()} property={'TelescopeSettings-FocalRatio'} />
       <Text>Settle time after slew:</Text>
-      <TextInputOption defaultValue={SettleTime?.toString()} property={'TelescopeSettings-SettleTime'} suffix="s" />
+      <TextInputOption defaultValue={SettleTime?.toString()} property={'TelescopeSettings-SettleTime'} suffix="s" marginRight={-10} />
       <Text style={styles.textInput}>Automatic Sync:</Text>
       <Switch value={!NoSync} onValueChange={handleSyncSwitch} />
     </View>
@@ -38,8 +38,6 @@ const styles = StyleSheet.create({
   container: {
     marginLeft: '1%',
     alignItems: 'center',
-        // borderColor: 'gray',
-    // borderWidth: 1,
   },
   cameraRow: {},
   textInput: {},
